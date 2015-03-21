@@ -632,7 +632,13 @@ htb_show () {
 ### Load class configuration from $HTP_PATH/$1
 ### Configure class parameters from CFILE
 htb_load_class () {
-	DEVICE=${1%%-*}
+	if [[ -z `echo $1 | awk -F'-' '{print $3}'` ]] 
+	then
+		DEVICE=${1%%-*}
+	else
+		DEVICE=`echo $1 | cut -d'-' -s -f1-2`
+	fi
+
 	CLSIDS=`htb_clsid_chain $1`
 	CLASS=${CLSIDS##*:}; [ -z "$CLASS" ] &&
 		htb_fail_off "$1 has invalid class ID!"
